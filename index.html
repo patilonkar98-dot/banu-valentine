@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Valentine 💖</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #ffd6e8, #ffeaf3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-family: 'Pacifico', cursive;
+    }
+
+    .card {
+      background: #ff8fb1;
+      width: 560px;
+      padding: 70px 60px;
+      border-radius: 35px;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+      color: #fff;
+      position: relative;
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: 42px;
+      margin-bottom: 50px;
+      line-height: 1.4;
+    }
+
+    .buttons {
+      position: relative;
+      height: 170px;
+    }
+
+    button {
+      font-family: 'Pacifico', cursive;
+      font-size: 28px;
+      padding: 16px 48px;
+      border: none;
+      border-radius: 50px;
+      position: absolute;
+      cursor: pointer;
+      transition: 0.12s ease;
+      white-space: nowrap;
+    }
+
+    #yes {
+      background: #fff;
+      color: #ff4d88;
+      left: 50%;
+      transform: translateX(-140%);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    #no {
+      background: #ff4d88;
+      color: #fff;
+      left: 50%;
+      top: 40px;
+      transform: translateX(20%);
+      animation: shake 0.35s infinite alternate;
+    }
+
+    @keyframes shake {
+      from { transform: translateX(20%) rotate(-2deg); }
+      to   { transform: translateX(20%) rotate(2deg); }
+    }
+
+    /* Falling emojis */
+    .fall {
+      position: fixed;
+      top: -50px;
+      font-size: 34px;
+      animation: fall linear forwards;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Popup */
+    .popup {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 4;
+    }
+
+    .popup-box {
+      background: #fff;
+      color: #ff4d88;
+      padding: 50px;
+      border-radius: 30px;
+      font-size: 32px;
+      text-align: center;
+      animation: pop 0.4s ease;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    /* Fullscreen video */
+    .video-overlay {
+      position: fixed;
+      inset: 0;
+      background: black;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    .video-overlay video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <h1>Will you be my valentine<br>banu 💘</h1>
+
+    <div class="buttons">
+      <button id="yes">Yes 💖</button>
+      <button id="no">No 🙅‍♀️</button>
+    </div>
+  </div>
+
+  <div class="popup" id="popup">
+    <div class="popup-box">
+      YAYYYY 💞🌹<br><br>
+      I knew you'd say YES 😘
+    </div>
+  </div>
+
+  <!-- VIDEO -->
+  <div class="video-overlay" id="videoOverlay">
+    <video id="loveVideo" playsinline>
+      <source src="https://res.cloudinary.com/drcrmxt7p/video/upload/v1770029620/I_love_You_baby_Funny_Proposal_shorts_short_shortsfeed_funny_funniest_viral_iloveyou_720p_s19h7e.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <!-- AUDIO -->
+  <audio id="bgMusic" preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4cde07d5b6.mp3">
+  </audio>
+
+  <audio id="dodgeSound" preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_9b4c8e0f76.mp3">
+  </audio>
+
+  <audio id="yesSound" preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1f0cfd3f0a.mp3">
+  </audio>
+
+  <script>
+    const noBtn = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+    const popup = document.getElementById("popup");
+    const bgMusic = document.getElementById("bgMusic");
+    const dodgeSound = document.getElementById("dodgeSound");
+    const yesSound = document.getElementById("yesSound");
+    const card = document.querySelector(".card");
+    const videoOverlay = document.getElementById("videoOverlay");
+    const loveVideo = document.getElementById("loveVideo");
+
+    const taunts = ["No 🙅‍♀️","Nice try 😜","Haha nope 😏","You wish 😈","Try again 💀"];
+
+    function moveNo() {
+      const cardRect = card.getBoundingClientRect();
+      const noRect = noBtn.getBoundingClientRect();
+      const padding = 20;
+
+      const maxX = cardRect.width - noRect.width - padding;
+      const maxY = cardRect.height - noRect.height - padding - 80;
+
+      noBtn.style.left = Math.random() * maxX + padding + "px";
+      noBtn.style.top  = Math.random() * maxY + padding + "px";
+
+      noBtn.textContent = taunts[Math.floor(Math.random() * taunts.length)];
+
+      dodgeSound.currentTime = 0;
+      dodgeSound.play();
+    }
+
+    noBtn.addEventListener("mouseenter", moveNo);
+    noBtn.addEventListener("touchstart", moveNo);
+
+    yesBtn.addEventListener("click", () => {
+      yesSound.play();
+      bgMusic.loop = true;
+      bgMusic.play();
+
+      popup.style.display = "flex";
+
+      for (let i = 0; i < 60; i++) {
+        const el = document.createElement("div");
+        el.className = "fall";
+        el.textContent = ["🌸","🌹","💖","💘","💞","❤️"][Math.floor(Math.random()*6)];
+        el.style.left = Math.random() * window.innerWidth + "px";
+        el.style.animationDuration = (Math.random()*2 + 3) + "s";
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 5000);
+      }
+
+      // 🎬 show video after emotions settle
+      setTimeout(() => {
+        videoOverlay.style.display = "flex";
+        loveVideo.currentTime = 0;
+        loveVideo.play();
+      }, 2200);
+    });
+  </script>
+
+</body>
+</html>
